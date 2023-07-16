@@ -1,6 +1,11 @@
 #include "Application.h"
 
 namespace Nasha{
+    struct SimplePushConstantData{
+        glm::vec2 offset;
+        alignas(16) glm::vec3 color;
+    };
+
     Application::Application() {
         loadModels();
         createPipelineLayout();
@@ -28,12 +33,17 @@ namespace Nasha{
     }
 
     void Application::createPipelineLayout() {
+        VkPushConstantRange pushConstantRange{};
+        pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+        pushConstantRange.offset = 0;
+        pushConstantRange.size = sizeof(SimplePushConstantData);
+
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         pipelineLayoutInfo.setLayoutCount = 0;
         pipelineLayoutInfo.pSetLayouts = nullptr;
-        pipelineLayoutInfo.pushConstantRangeCount = 0;
-        pipelineLayoutInfo.pPushConstantRanges = nullptr;
+        pipelineLayoutInfo.pushConstantRangeCount = 1;
+        pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
         if (vkCreatePipelineLayout(g_vkSetup.device(),
                                    &pipelineLayoutInfo,
                                    nullptr,
@@ -102,6 +112,9 @@ namespace Nasha{
     }
 
     void Application::recordCommandBuffer(int imageIndex) {
+        static int frame = 30;
+        frame = (frame + 1) % 100;
+
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -141,7 +154,20 @@ namespace Nasha{
 
         g_pipeline->bind(g_commandBuffers[imageIndex]);
         g_model->bind(g_commandBuffers[imageIndex]);
-        g_model->draw(g_commandBuffers[imageIndex]);
+        for (int j = 0; j < 4; j++) {
+            SimplePushConstantData push{};
+            push.offset = {-0.5f + frame * 0.02f, -0.4f + j * 0.25f};
+            push.color = {0.0f, 0.0f, 0.2f + 0.2f * j};
+
+            vkCmdPushConstants(
+                    g_commandBuffers[imageIndex],
+                    g_pipelineLayout,
+                    VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+                    0,
+                    sizeof(SimplePushConstantData),
+                    &push);
+            g_model ->draw(g_commandBuffers[imageIndex]);
+        }
 
         vkCmdEndRenderPass(g_commandBuffers[imageIndex]);
         if (vkEndCommandBuffer(g_commandBuffers[imageIndex]) != VK_SUCCESS) {
