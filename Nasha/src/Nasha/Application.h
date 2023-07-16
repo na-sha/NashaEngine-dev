@@ -11,8 +11,8 @@
 #include "GameObject.h"
 #include "Window.h"
 #include "VkSetup.h"
-#include "Pipeline.h"
-#include "Swapchain.h"
+#include "Renderer.h"
+#include "SimpleRenderSystem.h"
 
 #include <memory>
 #include <vector>
@@ -30,14 +30,6 @@ namespace Nasha{
 
     private:
         void loadGameObjects();
-        void createPipelineLayout();
-        void createPipeline();
-        void createCommandBuffers();
-        void freeCommandBuffers();
-        void drawFrame();
-        void recreateSwapChain();
-        void recordCommandBuffer(int imageIndex);
-        void renderGameObjects(VkCommandBuffer commandBuffer);
 
     public:
         static constexpr int WIDTH = 800;
@@ -46,11 +38,8 @@ namespace Nasha{
     private:
         Window g_window{WIDTH, HEIGHT, "Nasha-dev"};
         VkSetup g_vkSetup{g_window};
-        std::unique_ptr<SwapChain> g_vkSwapChain;
-        std::unique_ptr<Pipeline> g_pipeline{};
-        VkPipelineLayout g_pipelineLayout{};
-        std::vector<VkCommandBuffer> g_commandBuffers{};
-        std::vector<GameObject> gameObjects{};
+        Renderer g_renderer{g_window, g_vkSetup};
+        std::vector<GameObject> g_gameObjects{};
     };
 
     Application* createApplication();

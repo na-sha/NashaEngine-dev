@@ -30,6 +30,11 @@ namespace Nasha{
         VkResult acquireNextImage(uint32_t *imageIndex);
         VkResult submitCommandBuffers(const VkCommandBuffer *buffers, const uint32_t *imageIndex);
 
+        bool compareSwapChainFormat(const SwapChain& swapChain) const {
+            return swapChain.m_swapChainDepthFormat == m_swapChainDepthFormat &&
+                   swapChain.m_swapChainImageFormat == m_swapChainImageFormat;
+        }
+
     private:
         void init();
         void createSwapChain();
