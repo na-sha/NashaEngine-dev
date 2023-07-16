@@ -2,12 +2,13 @@
 
 namespace Nasha{
     struct SimplePushConstantData{
+        glm::mat2 transform{1.0f};
         glm::vec2 offset;
         alignas(16) glm::vec3 color;
     };
 
     Application::Application() {
-        loadModels();
+        loadGameObjects();
         createPipelineLayout();
         recreateSwapChain();
         createCommandBuffers();
@@ -24,12 +25,21 @@ namespace Nasha{
         vkDeviceWaitIdle(g_vkSetup.device());
     }
 
-    void Application::loadModels() {
+    void Application::loadGameObjects() {
         std::vector<Model::Vertex> vertices{
             {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
             {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
             {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}};
-        g_model = std::make_unique<Model>(g_vkSetup, vertices);
+        auto lveModel = std::make_shared<Model>(g_vkSetup, vertices);
+
+        auto triangle = GameObject::createGameObject();
+        triangle.model = lveModel;
+        triangle.color = {.1f, .8f, .1f};
+        triangle.transform2D.translation.x = .2f;
+        triangle.transform2D.scale = {2.f, .5f};
+        triangle.transform2D.rotation = .25f * glm::two_pi<float>();
+
+        gameObjects.push_back(std::move(triangle));
     }
 
     void Application::createPipelineLayout() {
@@ -112,9 +122,6 @@ namespace Nasha{
     }
 
     void Application::recordCommandBuffer(int imageIndex) {
-        static int frame = 30;
-        frame = (frame + 1) % 100;
-
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -152,26 +159,32 @@ namespace Nasha{
         vkCmdSetViewport(g_commandBuffers[imageIndex], 0, 1, &viewport);
         vkCmdSetScissor(g_commandBuffers[imageIndex], 0, 1, &scissor);
 
-        g_pipeline->bind(g_commandBuffers[imageIndex]);
-        g_model->bind(g_commandBuffers[imageIndex]);
-        for (int j = 0; j < 4; j++) {
+        renderGameObjects(g_commandBuffers[imageIndex]);
+
+        vkCmdEndRenderPass(g_commandBuffers[imageIndex]);
+        if (vkEndCommandBuffer(g_commandBuffers[imageIndex]) != VK_SUCCESS) {
+            throw std::runtime_error("failed to record command buffer!");
+        }
+    }
+
+    void Application::renderGameObjects(VkCommandBuffer commandBuffer) {
+        g_pipeline->bind(commandBuffer);
+
+        for (auto &obj: gameObjects) {
             SimplePushConstantData push{};
-            push.offset = {-0.5f + frame * 0.02f, -0.4f + j * 0.25f};
-            push.color = {0.0f, 0.0f, 0.2f + 0.2f * j};
+            push.offset = obj.transform2D.translation;
+            push.color = obj.color;
+            push.transform = obj.transform2D.mat2();
 
             vkCmdPushConstants(
-                    g_commandBuffers[imageIndex],
+                    commandBuffer,
                     g_pipelineLayout,
                     VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
                     0,
                     sizeof(SimplePushConstantData),
                     &push);
-            g_model ->draw(g_commandBuffers[imageIndex]);
-        }
-
-        vkCmdEndRenderPass(g_commandBuffers[imageIndex]);
-        if (vkEndCommandBuffer(g_commandBuffers[imageIndex]) != VK_SUCCESS) {
-            throw std::runtime_error("failed to record command buffer!");
+            obj.model->bind(commandBuffer);
+            obj.model->draw(commandBuffer);
         }
     }
 

@@ -53,7 +53,7 @@ file(GLOB_RECURSE SOURCES
         ${PROJECT_SOURCE_DIR}/Nasha/src/Nasha/*.cpp
         ${PROJECT_SOURCE_DIR}/Sandbox/src/Nasha/main.cpp)
 
-add_executable(${PROJECT_NAME} ${SOURCES} Nasha/src/Nasha/Pipeline.cpp Nasha/src/Nasha/Pipeline.h Nasha/src/Nasha/Model.cpp Nasha/src/Nasha/Model.h)
+add_executable(${PROJECT_NAME} ${SOURCES} Nasha/src/Nasha/GameObject.cpp Nasha/src/Nasha/GameObject.h)
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
@@ -126,10 +126,11 @@ file(GLOB_RECURSE GLSL_SOURCE_FILES
 foreach(GLSL ${GLSL_SOURCE_FILES})
     get_filename_component(FILE_NAME ${GLSL} NAME)
     set(SPIRV "${PROJECT_SOURCE_DIR}/Nasha/src/Nasha/shaders/${FILE_NAME}.spv")
-    add_custom_command(
-            OUTPUT ${SPIRV}
-            COMMAND ${GLSL_VALIDATOR} ${GLSL} -o ${SPIRV}
-            DEPENDS ${GLSL})
+#    add_custom_command(
+#            OUTPUT ${SPIRV}
+#            COMMAND ${GLSL_VALIDATOR} ${GLSL} -o ${SPIRV}
+#            DEPENDS ${GLSL})
+    execute_process(COMMAND ${GLSL_VALIDATOR} ${GLSL} -o ${SPIRV})
     message(STATUS "Ran Command: ${GLSL_VALIDATOR} ${GLSL} -o ${SPIRV}")
     list(APPEND SPIRV_BINARY_FILES ${SPIRV})
 endforeach(GLSL)

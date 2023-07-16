@@ -5,13 +5,14 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
 
 #include "Core.inl"
+#include "GameObject.h"
 #include "Window.h"
 #include "VkSetup.h"
 #include "Pipeline.h"
 #include "Swapchain.h"
-#include "Model.h"
 
 #include <memory>
 #include <vector>
@@ -28,7 +29,7 @@ namespace Nasha{
         void run();
 
     private:
-        void loadModels();
+        void loadGameObjects();
         void createPipelineLayout();
         void createPipeline();
         void createCommandBuffers();
@@ -36,6 +37,7 @@ namespace Nasha{
         void drawFrame();
         void recreateSwapChain();
         void recordCommandBuffer(int imageIndex);
+        void renderGameObjects(VkCommandBuffer commandBuffer);
 
     public:
         static constexpr int WIDTH = 800;
@@ -48,7 +50,7 @@ namespace Nasha{
         std::unique_ptr<Pipeline> g_pipeline{};
         VkPipelineLayout g_pipelineLayout{};
         std::vector<VkCommandBuffer> g_commandBuffers{};
-        std::unique_ptr<Model> g_model{};
+        std::vector<GameObject> gameObjects{};
     };
 
     Application* createApplication();
