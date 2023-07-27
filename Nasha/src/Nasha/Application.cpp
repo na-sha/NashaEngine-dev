@@ -20,20 +20,72 @@ namespace Nasha{
         vkDeviceWaitIdle(g_vkSetup.device());
     }
 
-    void Application::loadGameObjects() {
+    // temporary helper function, creates a 1x1x1 cube centered at offset
+    std::unique_ptr<Model> createCubeModel(VkSetup& device, glm::vec3 offset) {
         std::vector<Model::Vertex> vertices{
-            {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-            {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-            {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}};
-        auto lveModel = std::make_shared<Model>(g_vkSetup, vertices);
 
-        auto triangle = GameObject::createGameObject();
-        triangle.model = lveModel;
-        triangle.color = {.1f, .8f, .1f};
-        triangle.transform2D.translation.x = .2f;
-        triangle.transform2D.scale = {2.f, .5f};
-        triangle.transform2D.rotation = .25f * glm::two_pi<float>();
+                // left face (white)
+                {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
+                {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
+                {{-.5f, -.5f, .5f}, {.9f, .9f, .9f}},
+                {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
+                {{-.5f, .5f, -.5f}, {.9f, .9f, .9f}},
+                {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
 
-        g_gameObjects.push_back(std::move(triangle));
+                // right face (yellow)
+                {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
+                {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
+                {{.5f, -.5f, .5f}, {.8f, .8f, .1f}},
+                {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
+                {{.5f, .5f, -.5f}, {.8f, .8f, .1f}},
+                {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
+
+                // top face (orange, remember y axis points down)
+                {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+                {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+                {{-.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+                {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+                {{.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+                {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+
+                // bottom face (red)
+                {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+                {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
+                {{-.5f, .5f, .5f}, {.8f, .1f, .1f}},
+                {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+                {{.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+                {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
+
+                // nose face (blue)
+                {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+                {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+                {{-.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+                {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+                {{.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+                {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+
+                // tail face (green)
+                {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+                {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+                {{-.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+                {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+                {{.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+                {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+
+        };
+        for (auto& v : vertices) {
+            v.position += offset;
+        }
+        return std::make_unique<Model>(device, vertices);
+    }
+
+
+    void Application::loadGameObjects() {
+        std::shared_ptr<Model> model = createCubeModel(g_vkSetup, {0.0f, 0.0f, 0.0f});
+        auto cube = GameObject::createGameObject();
+        cube.model = model;
+        cube.transform.translation = {0.0f, 0.0f, 0.5f};
+        cube.transform.scale = {0.5f, 0.5f, 0.5f};
+        g_gameObjects.push_back(std::move(cube));
     }
 }
