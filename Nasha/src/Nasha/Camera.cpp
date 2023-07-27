@@ -5,7 +5,7 @@
 
 namespace Nasha{
 
-    void Camera::setOrthographicProjection(float left, float right, float top, float bottom, float near, float far) {
+    [[maybe_unused]]void Camera::setOrthographicProjection(float left, float right, float top, float bottom, float near, float far) {
         m_projectionMatrix = glm::mat4{1.0f};
         m_projectionMatrix[0][0] = 2.f / (right - left);
         m_projectionMatrix[1][1] = 2.f / (bottom - top);

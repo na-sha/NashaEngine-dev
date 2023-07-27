@@ -24,7 +24,7 @@ namespace Nasha{
         size_t imageCount() { return m_swapChainImages.size(); }
         VkFormat getSwapChainImageFormat() { return m_swapChainImageFormat; }
         VkExtent2D getSwapChainExtent() { return m_swapChainExtent; }
-        float extentAspectRatio() {
+        float extentAspectRatio() const {
             return static_cast<float>(m_swapChainExtent.width) / static_cast<float>(m_swapChainExtent.height);
         }
 

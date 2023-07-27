@@ -97,7 +97,7 @@ namespace Nasha{
         }
     }
 
-    void Model::draw(VkCommandBuffer commandBuffer) {
+    void Model::draw(VkCommandBuffer commandBuffer) const {
         if (hasIndexBuffer){
             vkCmdDrawIndexed(commandBuffer,
                              m_indexCount,

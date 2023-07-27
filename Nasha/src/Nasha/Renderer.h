@@ -35,7 +35,7 @@ namespace Nasha{
         VkCommandBuffer beginFrame();
         void endFrame();
         void beginSwapChainRenderPass(VkCommandBuffer commandBuffer);
-        void endSwapChainRenderPass(VkCommandBuffer commandBuffer);
+        void endSwapChainRenderPass(VkCommandBuffer commandBuffer) const;
 
     private:
         void createCommandBuffers();

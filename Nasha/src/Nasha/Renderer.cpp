@@ -4,10 +4,10 @@ namespace Nasha{
     Renderer::Renderer(Window& window, VkSetup& device) : m_window{window}, m_device{device} {
         recreateSwapChain();
         createCommandBuffers();
-    };
+    }
     Renderer::~Renderer(){
         freeCommandBuffers();
-    };
+    }
 
     void Renderer::recreateSwapChain() {
         VkExtent2D extent = m_window.getExtent();
@@ -104,7 +104,7 @@ namespace Nasha{
         VkRenderPassBeginInfo renderPassInfo{};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         renderPassInfo.renderPass = m_swapChain->getRenderPass();
-        renderPassInfo.framebuffer = m_swapChain->getFrameBuffer(m_currentImageIndex);
+        renderPassInfo.framebuffer = m_swapChain->getFrameBuffer((int)m_currentImageIndex);
 
         renderPassInfo.renderArea.offset = {0, 0};
         renderPassInfo.renderArea.extent = m_swapChain->getSwapChainExtent();
@@ -129,7 +129,7 @@ namespace Nasha{
         vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
     }
 
-    void Renderer::endSwapChainRenderPass(VkCommandBuffer commandBuffer){
+    void Renderer::endSwapChainRenderPass(VkCommandBuffer commandBuffer) const{
         assert(m_isFrameStarted && "Can't call endSwapChainRenderPass if frame is not in progress");
         assert(commandBuffer == getCurrentCommandBuffer() && "Can't end render pass on command buffer from a different frame");
 

@@ -53,7 +53,7 @@ namespace Nasha{
                 {{.5f,  -.5f, .5f},   {.8f, .8f, .1f}},
                 {{.5f,  .5f,  -.5f},  {.8f, .8f, .1f}},
 
-                // top face (orange, remember y axis points down)
+                // top face (orange, remember y-axis points down)
                 {{-.5f, -.5f, -.5f},  {.9f, .6f, .1f}},
                 {{.5f,  -.5f, .5f},   {.9f, .6f, .1f}},
                 {{-.5f, -.5f, .5f},   {.9f, .6f, .1f}},

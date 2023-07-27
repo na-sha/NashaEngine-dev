@@ -53,7 +53,7 @@ file(GLOB_RECURSE SOURCES
         ${PROJECT_SOURCE_DIR}/Nasha/src/Nasha/*.cpp
         ${PROJECT_SOURCE_DIR}/Sandbox/src/Nasha/main.cpp)
 
-add_executable(${PROJECT_NAME} ${SOURCES} Nasha/src/Nasha/MovementControls_keyboard.cpp Nasha/src/Nasha/MovementControls_keyboard.h)
+add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 

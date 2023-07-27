@@ -39,7 +39,7 @@ namespace Nasha{
         }
     }
 
-    VkExtent2D Window::getExtent() {
+    VkExtent2D Window::getExtent() const {
         return {static_cast<uint32_t>(m_width),
                 static_cast<uint32_t>(m_height)};
     }

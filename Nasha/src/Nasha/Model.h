@@ -28,7 +28,7 @@ namespace Nasha{
         Model &operator=(const Model&) = delete;
 
         void bind(VkCommandBuffer commandBuffer);
-        void draw(VkCommandBuffer commandBuffer);
+        void draw(VkCommandBuffer commandBuffer) const;
     private:
         void createVertexBuffers(const std::vector<Vertex> &vertices);
         void createIndexBuffers(const std::vector<uint32_t> &indices);
@@ -36,13 +36,13 @@ namespace Nasha{
     private:
         VkSetup& m_device;
 
-        VkBuffer m_vertexBuffer;
-        VkDeviceMemory m_vertexBufferMemory;
-        uint32_t m_vertexCount;
+        VkBuffer m_vertexBuffer{};
+        VkDeviceMemory m_vertexBufferMemory{};
+        uint32_t m_vertexCount{};
 
         bool hasIndexBuffer{false};
-        VkBuffer m_indexBuffer;
-        VkDeviceMemory m_indexBufferMemory;
-        uint32_t m_indexCount;
+        VkBuffer m_indexBuffer{};
+        VkDeviceMemory m_indexBufferMemory{};
+        uint32_t m_indexCount{};
     };
 }

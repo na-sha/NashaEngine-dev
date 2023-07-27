@@ -23,7 +23,7 @@ namespace Nasha {
         vkDestroyShaderModule(m_device.device(), m_fragShaderModule, nullptr);
         vkDestroyShaderModule(m_device.device(), m_vertShaderModule, nullptr);
         std::cout << "Pipeline Destroyed" << std::endl;
-    };
+    }
 
     void Pipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo) {
         configInfo.inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;

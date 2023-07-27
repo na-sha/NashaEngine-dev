@@ -9,11 +9,11 @@ namespace Nasha{
     SimpleRenderSystem::SimpleRenderSystem(VkSetup& device, VkRenderPass renderPass) : m_device{device} {
         createPipelineLayout();
         createPipeline(renderPass);
-    };
+    }
 
     SimpleRenderSystem::~SimpleRenderSystem(){
         vkDestroyPipelineLayout(m_device.device(), m_pipelineLayout, nullptr);
-    };
+    }
 
     void SimpleRenderSystem::createPipelineLayout() {
         VkPushConstantRange pushConstantRange{};

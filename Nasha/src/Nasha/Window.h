@@ -21,7 +21,7 @@ namespace Nasha{
         // Accessed for the creation of surface during setup phase
         void createWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
 
-        VkExtent2D getExtent();
+        [[nodiscard]] VkExtent2D getExtent() const;
         [[nodiscard]] bool wasWindowResized() const { return frameBufferResized; }
         void resetWindowResizedFlag() { frameBufferResized = false; }
         [[nodiscard]] GLFWwindow* getGLFWWindow() const { return m_window; }
