@@ -12,6 +12,7 @@
 #include "Window.h"
 #include "VkSetup.h"
 #include "Renderer.h"
+#include "MovementControls_keyboard.h"
 #include "Camera.h"
 #include "SimpleRenderSystem.h"
 

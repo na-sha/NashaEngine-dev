@@ -22,8 +22,9 @@ namespace Nasha{
         void createWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
 
         VkExtent2D getExtent();
-        [[nodiscard]] bool wasWindowResized() { return frameBufferResized; }
+        [[nodiscard]] bool wasWindowResized() const { return frameBufferResized; }
         void resetWindowResizedFlag() { frameBufferResized = false; }
+        [[nodiscard]] GLFWwindow* getGLFWWindow() const { return m_window; }
     private:
         void initWindow();
         static void frameBufferResizeCallback(GLFWwindow *refWindow, int width, int height);
