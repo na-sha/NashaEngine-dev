@@ -19,6 +19,7 @@ namespace Nasha{
         Renderer &operator=(const Renderer &) = delete;
 
         [[nodiscard]] VkRenderPass getSwapChainRenderPass() const { return m_swapChain->getRenderPass(); }
+        [[nodiscard]] float getAspectRatio() const { return m_swapChain->extentAspectRatio(); }
         [[nodiscard]] bool isFrameInProgress() const { return m_isFrameStarted; }
 
         [[nodiscard]] VkCommandBuffer getCurrentCommandBuffer() const {

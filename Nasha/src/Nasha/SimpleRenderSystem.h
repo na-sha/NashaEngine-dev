@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 
+#include "Camera.h"
 #include "GameObject.h"
 #include "VkSetup.h"
 #include "Pipeline.h"
@@ -23,7 +24,9 @@ namespace Nasha{
         SimpleRenderSystem(const SimpleRenderSystem &) = delete;
         SimpleRenderSystem &operator=(const SimpleRenderSystem &) = delete;
 
-        void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<GameObject>& gameObjects);
+        void renderGameObjects(VkCommandBuffer commandBuffer,
+                               std::vector<GameObject>& gameObjects,
+                               const Camera& camera);
 
     private:
         void createPipelineLayout();

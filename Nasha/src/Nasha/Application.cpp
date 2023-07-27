@@ -8,11 +8,16 @@ namespace Nasha{
 
     void Application::run() {
         SimpleRenderSystem simpleRenderSystem{g_vkSetup, g_renderer.getSwapChainRenderPass()};
+        Camera camera{};
+        camera.setViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
         while (!g_window.shouldClose()) {
             glfwPollEvents();
+            float aspect = g_renderer.getAspectRatio();
+//            camera.setOrthographicProjection(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f);
+            camera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f, 10.0f);
             if (auto commandBuffer = g_renderer.beginFrame()) {
                 g_renderer.beginSwapChainRenderPass(commandBuffer);
-                simpleRenderSystem.renderGameObjects(commandBuffer, g_gameObjects);
+                simpleRenderSystem.renderGameObjects(commandBuffer, g_gameObjects, camera);
                 g_renderer.endSwapChainRenderPass(commandBuffer);
                 g_renderer.endFrame();
             }
@@ -84,7 +89,7 @@ namespace Nasha{
         std::shared_ptr<Model> model = createCubeModel(g_vkSetup, {0.0f, 0.0f, 0.0f});
         auto cube = GameObject::createGameObject();
         cube.model = model;
-        cube.transform.translation = {0.0f, 0.0f, 0.5f};
+        cube.transform.translation = {0.0f, 0.0f, 2.5f};
         cube.transform.scale = {0.5f, 0.5f, 0.5f};
         g_gameObjects.push_back(std::move(cube));
     }
