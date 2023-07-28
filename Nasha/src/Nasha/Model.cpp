@@ -1,6 +1,9 @@
 #include "Model.h"
 
-#include <cassert>
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
+#include <iostream>
 
 namespace Nasha{
 
@@ -17,6 +20,13 @@ namespace Nasha{
             vkDestroyBuffer(m_device.device(), m_indexBuffer, nullptr);
             vkFreeMemory(m_device.device(), m_indexBufferMemory, nullptr);
         }
+    }
+
+    std::unique_ptr<Model> Model::createModelFromFile(VkSetup &device, const std::string &filepath) {
+        Builder builder{};
+        builder.loadModels(filepath);
+        std::cout << "Vertex count" << builder.vertices.size() << '\n';
+        return std::make_unique<Model>(device, builder);
     }
 
     void Model::createVertexBuffers(const std::vector<Vertex> &vertices) {
@@ -127,5 +137,48 @@ namespace Nasha{
         attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
         attributeDescriptions[1].offset = offsetof(Vertex, color);
         return attributeDescriptions;
+    }
+
+    void Model::Builder::loadModels(const std::string &filepath) {
+        tinyobj::attrib_t attrib;
+        std::vector<tinyobj::shape_t> shapes;
+        std::vector<tinyobj::material_t> materials;
+        std::string warn;
+        std::string error;
+
+        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &error, filepath.c_str())){
+            throw std::runtime_error(warn + error);
+        }
+        vertices.clear();
+        indices.clear();
+
+        for (const auto& shape: shapes){
+            for (const auto& index: shape.mesh.indices) {
+                Vertex vertex{};
+
+                if (index.vertex_index >= 0){
+                    vertex.position = {
+                            attrib.vertices[3 * index.vertex_index + 0],
+                            attrib.vertices[3 * index.vertex_index + 1],
+                            attrib.vertices[3 * index.vertex_index + 2]
+                    };
+                }
+                if (index.normal_index >= 0){
+                    vertex.normal = {
+                            attrib.normals[3 * index.normal_index + 0],
+                            attrib.normals[3 * index.normal_index + 1],
+                            attrib.normals[3 * index.normal_index + 2]
+                    };
+                }
+                if (index.texcoord_index >= 0){
+                    vertex.uv = {
+                            attrib.texcoords[2 * index.texcoord_index + 0],
+                            attrib.texcoords[2 * index.texcoord_index + 1]
+                    };
+                }
+
+                vertices.push_back(vertex);
+            }
+        }
     }
 }

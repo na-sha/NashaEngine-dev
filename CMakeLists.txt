@@ -48,6 +48,15 @@ else()
     message(STATUS "Using glfw lib at: ${GLFW_LIB}")
 endif()
 
+# Setting up tinyObjLoader
+set(TINY_OBJ_LOADER_PATH ${PROJECT_SOURCE_DIR}/Nasha/vendors/tinyobjloader)
+if (DEFINED TINY_OBJ_LOADER_PATH)
+    message(STATUS "tiny_obj_loader path found")
+    set(TINY_OBJ_LOADER_INCLUDE_DIR "${TINY_OBJ_LOADER_PATH}")
+else()
+    find_package(tiny_obj_loader REQUIRED)
+endif()
+
 file(GLOB_RECURSE SOURCES
         ${PROJECT_SOURCE_DIR}/Nasha/src/*.cpp
         ${PROJECT_SOURCE_DIR}/Nasha/src/Nasha/*.cpp
@@ -90,6 +99,7 @@ elseif (UNIX)
     target_include_directories(${PROJECT_NAME} PUBLIC
             ${Vulkan_INCLUDE_DIRS}
             ${GLFW_INCLUDE_DIRS}
+            ${TINY_OBJ_LOADER_INCLUDE_DIR}
             )
     target_link_libraries(${PROJECT_NAME}
             ${Vulkan_LIBRARIES}/libvulkan.1.dylib
