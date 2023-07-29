@@ -1,9 +1,26 @@
 #include "Model.h"
 
+#include "Utils.h"
+
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
 
+#include <unordered_map>
 #include <iostream>
+
+
+namespace std {
+    template <>
+    struct hash<Nasha::Model::Vertex> {
+        size_t operator()(Nasha::Model::Vertex const &vertex) const {
+            size_t seed = 0;
+            Nasha::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
+            return seed;
+        }
+    };
+}
 
 namespace Nasha{
 
@@ -25,7 +42,7 @@ namespace Nasha{
     std::unique_ptr<Model> Model::createModelFromFile(VkSetup &device, const std::string &filepath) {
         Builder builder{};
         builder.loadModels(filepath);
-        std::cout << "Vertex count" << builder.vertices.size() << '\n';
+        std::cout << "Vertex count: " << builder.vertices.size() << '\n';
         return std::make_unique<Model>(device, builder);
     }
 
@@ -152,6 +169,8 @@ namespace Nasha{
         vertices.clear();
         indices.clear();
 
+        std::unordered_map<Vertex, uint32_t> uniqueVertices{};
+
         for (const auto& shape: shapes){
             for (const auto& index: shape.mesh.indices) {
                 Vertex vertex{};
@@ -162,6 +181,17 @@ namespace Nasha{
                             attrib.vertices[3 * index.vertex_index + 1],
                             attrib.vertices[3 * index.vertex_index + 2]
                     };
+
+                    auto colorIndex = 3 * index.vertex_index + 2;
+                    if (colorIndex < attrib.colors.size()){
+                        vertex.color = {
+                                attrib.colors[colorIndex - 2],
+                                attrib.colors[colorIndex - 1],
+                                attrib.colors[colorIndex - 0]
+                        };
+                    }else{
+                        vertex.color = {1.0f, 1.0f, 1.0f};
+                    }
                 }
                 if (index.normal_index >= 0){
                     vertex.normal = {
@@ -177,7 +207,11 @@ namespace Nasha{
                     };
                 }
 
-                vertices.push_back(vertex);
+                if (uniqueVertices.count(vertex) == 0){
+                    uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
+                    vertices.push_back(vertex);
+                }
+                indices.push_back(uniqueVertices[vertex]);
             }
         }
     }

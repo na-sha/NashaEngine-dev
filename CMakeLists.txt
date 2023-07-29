@@ -62,7 +62,7 @@ file(GLOB_RECURSE SOURCES
         ${PROJECT_SOURCE_DIR}/Nasha/src/Nasha/*.cpp
         ${PROJECT_SOURCE_DIR}/Sandbox/src/Nasha/main.cpp)
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} Nasha/src/Nasha/Utils.h)
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
