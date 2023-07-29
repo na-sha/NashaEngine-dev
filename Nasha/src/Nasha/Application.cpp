@@ -38,11 +38,18 @@ namespace Nasha{
     }
 
     void Application::loadGameObjects() {
-        std::shared_ptr<Model> model = Model::createModelFromFile(g_vkSetup, "../Nasha/src/Nasha/models/smooth_vase.obj");
-        auto cube = GameObject::createGameObject();
-        cube.model = model;
-        cube.transform.translation = {0.0f, 0.0f, 2.5f};
-        cube.transform.scale = glm::vec3(3.0f);
-        g_gameObjects.push_back(std::move(cube));
+        std::shared_ptr<Model> model = Model::createModelFromFile(g_vkSetup, "../Nasha/src/Nasha/models/flat_vase.obj");
+        auto flatVase = GameObject::createGameObject();
+        flatVase.model = model;
+        flatVase.transform.translation = {-0.5f, 0.5f, 2.5f};
+        flatVase.transform.scale = {3.0f, 3.0f, 3.0f};
+        g_gameObjects.push_back(std::move(flatVase));
+
+        model = Model::createModelFromFile(g_vkSetup, "../Nasha/src/Nasha/models/smooth_vase.obj");
+        auto smoothVase = GameObject::createGameObject();
+        smoothVase.model = model;
+        smoothVase.transform.translation = {0.5f, 0.5f, 2.5f};
+        smoothVase.transform.scale = {3.0f, 3.0f, 3.0f};
+        g_gameObjects.push_back(std::move(smoothVase));
     }
 }
