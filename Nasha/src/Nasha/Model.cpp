@@ -8,8 +8,6 @@
 #include <glm/gtx/hash.hpp>
 
 #include <unordered_map>
-#include <iostream>
-
 
 namespace std {
     template <>
@@ -29,12 +27,11 @@ namespace Nasha{
         createIndexBuffers(builder.indices);
     }
 
-    Model::~Model(){}
+    Model::~Model()= default;
 
     std::unique_ptr<Model> Model::createModelFromFile(VkSetup &device, const std::string &filepath) {
         Builder builder{};
         builder.loadModels(filepath);
-        std::cout << "Vertex count: " << builder.vertices.size() << '\n';
         return std::make_unique<Model>(device, builder);
     }
 
