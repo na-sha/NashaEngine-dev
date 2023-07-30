@@ -22,7 +22,7 @@ namespace Nasha{
         void moveInPlaneXZ(GLFWwindow* window, float dt, GameObject& gameObject) const;
 
         KeyMappings keys{};
-        float moveSpeed{3.f};
-        float lookSpeed{1.5f};
+        float m_moveSpeed{3.f};
+        float m_lookSpeed{1.5f};
     };
 }

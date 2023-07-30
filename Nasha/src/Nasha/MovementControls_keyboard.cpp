@@ -6,13 +6,17 @@
 namespace Nasha {
     void KeyboardMovementController::moveInPlaneXZ(GLFWwindow* window, float dt, GameObject& gameObject) const {
         glm::vec3 rotate{0};
-        if (glfwGetKey(window, keys.lookRight) == GLFW_PRESS) rotate.y += 1.f;
-        if (glfwGetKey(window, keys.lookLeft) == GLFW_PRESS) rotate.y -= 1.f;
-        if (glfwGetKey(window, keys.lookUp) == GLFW_PRESS) rotate.x += 1.f;
-        if (glfwGetKey(window, keys.lookDown) == GLFW_PRESS) rotate.x -= 1.f;
+        if (glfwGetKey(window, keys.lookRight) == GLFW_PRESS)
+            rotate.y += 1.f;
+        if (glfwGetKey(window, keys.lookLeft) == GLFW_PRESS)
+            rotate.y -= 1.f;
+        if (glfwGetKey(window, keys.lookUp) == GLFW_PRESS)
+            rotate.x += 1.f;
+        if (glfwGetKey(window, keys.lookDown) == GLFW_PRESS)
+            rotate.x -= 1.f;
 
         if (glm::dot(rotate, rotate) > std::numeric_limits<float>::epsilon()) {
-            gameObject.transform.rotation += lookSpeed * dt * glm::normalize(rotate);
+            gameObject.transform.rotation += m_lookSpeed * dt * glm::normalize(rotate);
         }
 
         // limit pitch values between about +/- 85ish degrees
@@ -33,7 +37,7 @@ namespace Nasha {
         if (glfwGetKey(window, keys.moveDown) == GLFW_PRESS) moveDir -= upDir;
 
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
-            gameObject.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
+            gameObject.transform.translation += m_moveSpeed * dt * glm::normalize(moveDir);
         }
     }
 }
