@@ -32,6 +32,10 @@ namespace Nasha{
         [[nodiscard]] glm::mat3 normalMatrix() const;
     };
 
+    struct PointLightComponent {
+        float lightIntensity = 1.0f;
+    };
+
     class GameObject {
     public:
         using id_t = unsigned int;
@@ -41,6 +45,10 @@ namespace Nasha{
             static id_t currentId = 0;
             return GameObject{currentId++};
         }
+
+        static GameObject makePointLight(float intensity = 10.0f,
+                                         float radius = 0.1f,
+                                         glm::vec3 color = glm::vec3(1.0f));
 
         GameObject(const GameObject&) = delete;
         GameObject &operator=(const GameObject&) = delete;
@@ -53,10 +61,12 @@ namespace Nasha{
         explicit GameObject(id_t id) : m_id{id} {}
 
     public:
-        std::shared_ptr<Model> model{};
         glm::vec3 color{};
 //        Transform2DComponent transform2D{};
         TransformComponent transform{};
+
+        std::shared_ptr<Model> model{};
+        std::unique_ptr<PointLightComponent> pointLight = nullptr;
 
     private:
         id_t m_id;

@@ -25,6 +25,7 @@ namespace Nasha{
         PointLightSystem(const PointLightSystem &) = delete;
         PointLightSystem &operator=(const PointLightSystem &) = delete;
 
+        void update(FrameInfo& frameInfo, GlobalUbo& ubo);
         void render(FrameInfo &frameInfo);
 
     private:
@@ -34,6 +35,6 @@ namespace Nasha{
         VkSetup &lveDevice;
 
         std::unique_ptr<Pipeline> lvePipeline;
-        VkPipelineLayout pipelineLayout;
+        VkPipelineLayout pipelineLayout{};
     };
 }
