@@ -72,7 +72,8 @@ namespace Nasha{
                     frameTime,
                     commandBuffer,
                     camera,
-                    globalDescriptorSet[frameIndex]
+                    globalDescriptorSet[frameIndex],
+                    g_gameObjects
                 };
 
                 /* ----- UPDATE ----- */
@@ -83,7 +84,7 @@ namespace Nasha{
 
                 /* ----- RENDER ----- */
                 g_renderer.beginSwapChainRenderPass(commandBuffer);
-                simpleRenderSystem.renderGameObjects(frameInfo, g_gameObjects);
+                simpleRenderSystem.renderGameObjects(frameInfo);
                 g_renderer.endSwapChainRenderPass(commandBuffer);
                 g_renderer.endFrame();
             }
@@ -97,20 +98,20 @@ namespace Nasha{
         flatVase.model = model;
         flatVase.transform.translation = {-0.5f, 0.5f, 0.0f};
         flatVase.transform.scale = {3.0f, 3.0f, 3.0f};
-        g_gameObjects.push_back(std::move(flatVase));
+        g_gameObjects.emplace(flatVase.gameId(), std::move(flatVase));
 
         model = Model::createModelFromFile(g_vkSetup, "../Nasha/src/Nasha/models/smooth_vase.obj");
         GameObject smoothVase = GameObject::createGameObject();
         smoothVase.model = model;
         smoothVase.transform.translation = {0.5f, 0.5f, 0.0f};
         smoothVase.transform.scale = {3.0f, 3.0f, 3.0f};
-        g_gameObjects.push_back(std::move(smoothVase));
+        g_gameObjects.emplace(smoothVase.gameId(), std::move(smoothVase));
 
         model = Model::createModelFromFile(g_vkSetup, "../Nasha/src/Nasha/models/quad.obj");
         GameObject floor = GameObject::createGameObject();
         floor.model = model;
         floor.transform.translation = {0.0f, 0.5f, 0.0f};
         floor.transform.scale = {3.0f, 3.0f, 3.0f};
-        g_gameObjects.push_back(std::move(floor));
+        g_gameObjects.emplace(floor.gameId(), std::move(floor));
     }
 }

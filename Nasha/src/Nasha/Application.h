@@ -44,7 +44,7 @@ namespace Nasha{
         VkSetup g_vkSetup{g_window};
         Renderer g_renderer{g_window, g_vkSetup};
         std::unique_ptr<DescriptorPool> g_globalPool{};
-        std::vector<GameObject> g_gameObjects{};
+        GameObject::Map g_gameObjects{};
     };
 
     Application* createApplication();

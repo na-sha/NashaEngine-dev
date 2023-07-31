@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <memory>
+#include <unordered_map>
 
 namespace Nasha{
 //    struct Transform2DComponent{
@@ -27,17 +28,6 @@ namespace Nasha{
         glm::vec3 scale{1.0f, 1.0f, 1.0f};
         glm::vec3 rotation{};
 
-//        glm::mat4 mat4(){
-//            auto transform = glm::translate(glm::mat4{1.0f}, translation);
-//            transform = glm::rotate(transform, rotation.y, {0.0f, 1.0f, 0.0f});
-//            transform = glm::rotate(transform, rotation.x, {1.0f, 0.0f, 0.0f});
-//            transform = glm::rotate(transform, rotation.z, {0.0f, 0.0f, 1.0f});
-//            transform = glm::scale(transform, scale);
-//            return transform;
-//        }
-        // Matrix corresponds to Translate * Ry * Rx * Rz * Scale
-        // Rotations correspond to Tait-bryan angles of Y(1), X(2), Z(3)
-        // https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
         [[nodiscard]] glm::mat4 mat4() const;
         [[nodiscard]] glm::mat3 normalMatrix() const;
     };
@@ -45,6 +35,7 @@ namespace Nasha{
     class GameObject {
     public:
         using id_t = unsigned int;
+        using Map = std::unordered_map<id_t, GameObject>;
 
         static GameObject createGameObject(){
             static id_t currentId = 0;
