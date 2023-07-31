@@ -5,7 +5,9 @@
 namespace Nasha{
     struct GlobalUbo{
         glm::mat4 projectionView{1.0f};
-        glm::vec3 lightDirection = glm::normalize(glm::vec3{1.0f, -3.0f, -1.0f});
+        glm::vec4 ambientLightColor{1.0f}; // w is the light intensity
+        glm::vec3 lightPosition{-1.0f};
+        alignas(16)glm::vec4 lightColor{1.0f}; // w is the intensity of the light
     };
 
     Application::Application() {
@@ -48,6 +50,7 @@ namespace Nasha{
         camera.setViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
 
         auto viewerObject = GameObject::createGameObject();
+        viewerObject.transform.translation.z = -2.5f;
         KeyboardMovementController cameraController{};
 
         auto currentTime = std::chrono::high_resolution_clock::now();
@@ -60,7 +63,7 @@ namespace Nasha{
             camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
             float aspect = g_renderer.getAspectRatio();
 //            camera.setOrthographicProjection(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f);
-            camera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f, 10.0f);
+            camera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f, 100.0f);
             if (auto commandBuffer = g_renderer.beginFrame()) {
                 int frameIndex = g_renderer.getFrameIndex();
 
@@ -90,17 +93,24 @@ namespace Nasha{
 
     void Application::loadGameObjects() {
         std::shared_ptr<Model> model = Model::createModelFromFile(g_vkSetup, "../Nasha/src/Nasha/models/flat_vase.obj");
-        auto flatVase = GameObject::createGameObject();
+        GameObject flatVase = GameObject::createGameObject();
         flatVase.model = model;
-        flatVase.transform.translation = {-0.5f, 0.5f, 2.5f};
+        flatVase.transform.translation = {-0.5f, 0.5f, 0.0f};
         flatVase.transform.scale = {3.0f, 3.0f, 3.0f};
         g_gameObjects.push_back(std::move(flatVase));
 
         model = Model::createModelFromFile(g_vkSetup, "../Nasha/src/Nasha/models/smooth_vase.obj");
-        auto smoothVase = GameObject::createGameObject();
+        GameObject smoothVase = GameObject::createGameObject();
         smoothVase.model = model;
-        smoothVase.transform.translation = {0.5f, 0.5f, 2.5f};
+        smoothVase.transform.translation = {0.5f, 0.5f, 0.0f};
         smoothVase.transform.scale = {3.0f, 3.0f, 3.0f};
         g_gameObjects.push_back(std::move(smoothVase));
+
+        model = Model::createModelFromFile(g_vkSetup, "../Nasha/src/Nasha/models/quad.obj");
+        GameObject floor = GameObject::createGameObject();
+        floor.model = model;
+        floor.transform.translation = {0.0f, 0.5f, 0.0f};
+        floor.transform.scale = {3.0f, 3.0f, 3.0f};
+        g_gameObjects.push_back(std::move(floor));
     }
 }
