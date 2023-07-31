@@ -19,7 +19,7 @@
 namespace Nasha{
     class SimpleRenderSystem{
     public:
-        SimpleRenderSystem(VkSetup& device, VkRenderPass renderPass);
+        SimpleRenderSystem(VkSetup& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
         ~SimpleRenderSystem();
 
         SimpleRenderSystem(const SimpleRenderSystem &) = delete;
@@ -29,7 +29,7 @@ namespace Nasha{
                                std::vector<GameObject>& gameObjects);
 
     private:
-        void createPipelineLayout();
+        void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
         void createPipeline(VkRenderPass renderPass);
 
     public:

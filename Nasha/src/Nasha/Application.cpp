@@ -41,7 +41,9 @@ namespace Nasha{
             .build(globalDescriptorSet[i]);
         }
 
-        SimpleRenderSystem simpleRenderSystem{g_vkSetup, g_renderer.getSwapChainRenderPass()};
+        SimpleRenderSystem simpleRenderSystem{g_vkSetup,
+                                              g_renderer.getSwapChainRenderPass(),
+                                              globalSetLayout->getDescriptorSetLayout()};
         Camera camera{};
         camera.setViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
 
@@ -61,19 +63,22 @@ namespace Nasha{
             camera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f, 10.0f);
             if (auto commandBuffer = g_renderer.beginFrame()) {
                 int frameIndex = g_renderer.getFrameIndex();
+
                 FrameInfo frameInfo{
                     frameIndex,
                     frameTime,
                     commandBuffer,
-                    camera
+                    camera,
+                    globalDescriptorSet[frameIndex]
                 };
-                //Update
+
+                /* ----- UPDATE ----- */
                 GlobalUbo ubo{};
                 ubo.projectionView = camera.getProjection() * camera.getView();
                 uboBuffers[frameIndex]->writeToBuffer(&ubo);
                 uboBuffers[frameIndex]->flush();
 
-                // Render
+                /* ----- RENDER ----- */
                 g_renderer.beginSwapChainRenderPass(commandBuffer);
                 simpleRenderSystem.renderGameObjects(frameInfo, g_gameObjects);
                 g_renderer.endSwapChainRenderPass(commandBuffer);
