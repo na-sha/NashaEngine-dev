@@ -15,6 +15,7 @@
 #include "MovementControls_keyboard.h"
 #include "Camera.h"
 #include "SimpleRenderSystem.h"
+#include "PointLightSystem.h"
 #include "Buffer.h"
 #include "Descriptors.h"
 

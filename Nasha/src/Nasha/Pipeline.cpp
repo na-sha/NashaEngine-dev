@@ -94,6 +94,9 @@ namespace Nasha {
         configInfo.dynamicStateInfo.dynamicStateCount =
                 static_cast<uint32_t>(configInfo.dynamicStateEnables.size());
         configInfo.dynamicStateInfo.flags = 0;
+
+        configInfo.bindingDescription = Model::Vertex::getBindingDescriptions();
+        configInfo.attributeDescription = Model::Vertex::getAttributeDescriptions();
     }
 
     void Pipeline::createGraphicPipeline(const std::string &vertFilePath,
@@ -129,8 +132,8 @@ namespace Nasha {
 
         VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
 
-        auto bindingDescriptions = Model::Vertex::getBindingDescriptions();
-        auto attributeDescriptions = Model::Vertex::getAttributeDescriptions();
+        const std::vector<VkVertexInputBindingDescription>& bindingDescriptions = configInfo.bindingDescription;
+        const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions = configInfo.attributeDescription;
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 //        typedef struct VkPipelineVertexInputStateCreateInfo {
 //            VkStructureType                             sType;

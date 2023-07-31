@@ -4,7 +4,8 @@
 
 namespace Nasha{
     struct GlobalUbo{
-        glm::mat4 projectionView{1.0f};
+        glm::mat4 projection{1.0f};
+        glm::mat4 view{1.0f};
         glm::vec4 ambientLightColor{1.0f}; // w is the light intensity
         glm::vec3 lightPosition{-1.0f};
         alignas(16)glm::vec4 lightColor{1.0f}; // w is the intensity of the light
@@ -45,7 +46,12 @@ namespace Nasha{
 
         SimpleRenderSystem simpleRenderSystem{g_vkSetup,
                                               g_renderer.getSwapChainRenderPass(),
-                                              globalSetLayout->getDescriptorSetLayout()};
+                                              globalSetLayout->getDescriptorSetLayout()
+        };
+        PointLightSystem pointLightSystem{g_vkSetup,
+                                          g_renderer.getSwapChainRenderPass(),
+                                          globalSetLayout->getDescriptorSetLayout()
+        };
         Camera camera{};
         camera.setViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
 
@@ -78,13 +84,15 @@ namespace Nasha{
 
                 /* ----- UPDATE ----- */
                 GlobalUbo ubo{};
-                ubo.projectionView = camera.getProjection() * camera.getView();
+                ubo.projection = camera.getProjection();
+                ubo.view = camera.getView();
                 uboBuffers[frameIndex]->writeToBuffer(&ubo);
                 uboBuffers[frameIndex]->flush();
 
                 /* ----- RENDER ----- */
                 g_renderer.beginSwapChainRenderPass(commandBuffer);
                 simpleRenderSystem.renderGameObjects(frameInfo);
+                pointLightSystem.render(frameInfo);
                 g_renderer.endSwapChainRenderPass(commandBuffer);
                 g_renderer.endFrame();
             }
