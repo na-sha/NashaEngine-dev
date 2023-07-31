@@ -16,6 +16,7 @@
 #include "Camera.h"
 #include "SimpleRenderSystem.h"
 #include "Buffer.h"
+#include "Descriptors.h"
 
 #include <memory>
 #include <vector>
@@ -42,6 +43,7 @@ namespace Nasha{
         Window g_window{WIDTH, HEIGHT, "Nasha-dev"};
         VkSetup g_vkSetup{g_window};
         Renderer g_renderer{g_window, g_vkSetup};
+        std::unique_ptr<DescriptorPool> g_globalPool{};
         std::vector<GameObject> g_gameObjects{};
     };
 

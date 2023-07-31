@@ -44,6 +44,12 @@ namespace Nasha{
             camera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f, 10.0f);
             if (auto commandBuffer = g_renderer.beginFrame()) {
                 int frameIndex = g_renderer.getFrameIndex();
+                FrameInfo frameInfo{
+                    frameIndex,
+                    frameTime,
+                    commandBuffer,
+                    camera
+                };
                 //Update
                 GlobalUbo ubo{};
                 ubo.projectionView = camera.getProjection() * camera.getView();
@@ -52,7 +58,7 @@ namespace Nasha{
 
                 // Render
                 g_renderer.beginSwapChainRenderPass(commandBuffer);
-                simpleRenderSystem.renderGameObjects(commandBuffer, g_gameObjects, camera);
+                simpleRenderSystem.renderGameObjects(frameInfo, g_gameObjects);
                 g_renderer.endSwapChainRenderPass(commandBuffer);
                 g_renderer.endFrame();
             }
