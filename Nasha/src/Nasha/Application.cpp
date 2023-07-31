@@ -9,21 +9,38 @@ namespace Nasha{
     };
 
     Application::Application() {
+        g_globalPool = DescriptorPool::Builder(g_vkSetup)
+                .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
+                .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+                .build();
         loadGameObjects();
     }
     Application::~Application()= default;
 
     void Application::run() {
         std::vector<std::unique_ptr<Buffer>> uboBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
-        for (int i = 0; i < uboBuffers.size(); i++) {
-            uboBuffers[i] = std::make_unique<Buffer>(
+        for (std::unique_ptr<Buffer>& uboBuffer : uboBuffers) {
+            uboBuffer = std::make_unique<Buffer>(
                     g_vkSetup,
                     sizeof(GlobalUbo),
                     1,
                     VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-            uboBuffers[i]->map();
+            uboBuffer->map();
         }
+
+        auto globalSetLayout = DescriptorSetLayout::Builder(g_vkSetup)
+                .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+                .build();
+
+        std::vector<VkDescriptorSet> globalDescriptorSet(SwapChain::MAX_FRAMES_IN_FLIGHT);
+        for (int i = 0; i < globalDescriptorSet.size(); i++){
+            auto bufferInfo = uboBuffers[i]->descriptorInfo();
+            DescriptorWriter(*globalSetLayout, *g_globalPool)
+            .writeBuffer(0, &bufferInfo)
+            .build(globalDescriptorSet[i]);
+        }
+
         SimpleRenderSystem simpleRenderSystem{g_vkSetup, g_renderer.getSwapChainRenderPass()};
         Camera camera{};
         camera.setViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
