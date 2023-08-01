@@ -14,6 +14,7 @@
 #include "FrameInfo.h"
 
 #include <memory>
+#include <map>
 #include <vector>
 
 namespace Nasha{

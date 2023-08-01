@@ -4,13 +4,12 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <string>
 #include <memory>
 
 namespace Nasha{
     class Window{
     public:
-        Window(int width, int height, std::string windowName);
+        Window(int width, int height, const char* windowName);
         ~Window();
 
         Window(const Window&) = delete;
@@ -32,7 +31,7 @@ namespace Nasha{
     public:
     private:
         int m_width{}, m_height{};
-        std::string m_windowName{};
+        const char* m_windowName{};
         GLFWwindow* m_window{};
         bool frameBufferResized{false};
     };

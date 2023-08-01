@@ -85,8 +85,11 @@ namespace Nasha{
 
                 /* ----- RENDER ----- */
                 g_renderer.beginSwapChainRenderPass(commandBuffer);
+
+                // Order her matters
                 simpleRenderSystem.renderGameObjects(frameInfo);
                 pointLightSystem.render(frameInfo);
+
                 g_renderer.endSwapChainRenderPass(commandBuffer);
                 g_renderer.endFrame();
             }
@@ -132,7 +135,7 @@ namespace Nasha{
                     glm::mat4(1.f),
                     (i * glm::two_pi<float>()) / lightColors.size(),
                     {0.f, -1.f, 0.f});
-            pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
+            pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.5f, -1.5f, -1.0f, 1.f));
             g_gameObjects.emplace(pointLight.gameId(), std::move(pointLight));
         }
     }

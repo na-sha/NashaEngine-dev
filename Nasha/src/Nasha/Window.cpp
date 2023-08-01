@@ -1,8 +1,8 @@
 #include "Window.h"
 
 namespace Nasha{
-    Window::Window(int width, int height, std::string windowName)
-        :m_width{width}, m_height{height}, m_windowName{std::move(windowName)}{
+    Window::Window(int width, int height, const char* windowName)
+        :m_width{width}, m_height{height}, m_windowName{windowName}{
         std::cout << "Initiating Window" << std::endl;
         initWindow();
     }
@@ -21,7 +21,7 @@ namespace Nasha{
 
         m_window =  glfwCreateWindow(m_width,
                                      m_height,
-                                     m_windowName.c_str(),
+                                     m_windowName,
                                      nullptr,
                                      nullptr);
         glfwSetWindowUserPointer(m_window, this);

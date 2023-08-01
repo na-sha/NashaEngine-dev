@@ -45,6 +45,7 @@ namespace Nasha{
 
         PipelineConfigInfo pipelineConfig{};
         Pipeline::defaultPipelineConfigInfo(pipelineConfig);
+        Pipeline::enableAlphaBlending(pipelineConfig);
         pipelineConfig.attributeDescription.clear();
         pipelineConfig.bindingDescription.clear();
         pipelineConfig.renderPass = renderPass;
@@ -77,6 +78,18 @@ namespace Nasha{
     }
 
     void PointLightSystem::render(FrameInfo& frameInfo) {
+        // Sort lights
+        std::map<float, GameObject::id_t> sorted;
+        for (auto& keyValue : frameInfo.gameObjects) {
+            GameObject& obj = keyValue.second;
+            if (obj.pointLight == nullptr) continue;
+
+            // calculate distance
+            auto offset = frameInfo.camera.getPosition() - obj.transform.translation;
+            float disSquared = glm::dot(offset, offset);
+            sorted[disSquared] = obj.gameId();
+        }
+
         lvePipeline->bind(frameInfo.commandBuffer);
 
         vkCmdBindDescriptorSets(
@@ -89,9 +102,8 @@ namespace Nasha{
                 0,
                 nullptr);
 
-        for (auto& keyValue : frameInfo.gameObjects) {
-            GameObject& obj = keyValue.second;
-            if (obj.pointLight == nullptr) continue;
+        for (auto it = sorted.rbegin(); it != sorted.rend(); ++it) {
+            GameObject& obj = frameInfo.gameObjects.at(it->second);
 
             PointLightPushConstants push{};
             push.position = glm::vec4(obj.transform.translation, 1.f);

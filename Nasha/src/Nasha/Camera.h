@@ -19,6 +19,7 @@ namespace Nasha{
         [[nodiscard]] const glm::mat4& getProjection() const { return m_projectionMatrix; }
         [[nodiscard]] const glm::mat4& getView() const { return m_viewMatrix; }
         [[nodiscard]] const glm::mat4& getInverseView() const { return m_inverseViewMatrix; }
+        [[nodiscard]] const glm::vec3 getPosition() const { return m_inverseViewMatrix[3]; }
     private:
     public:
     private:
